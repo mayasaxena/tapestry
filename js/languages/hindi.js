@@ -959,7 +959,9 @@ const hindi_address = {
     "wife": null,
     "wife_brother_younger": null,
     "stepmother": "ma",
-    "stepfather": "papa"
+    "stepfather": "papa",
+    "husband_brother_older_wife": "didi",
+    "husband_sister_husband": "jija ji"
   },
   // For elders without a title, by how many generations above you they are
   generic: {
