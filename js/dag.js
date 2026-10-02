@@ -101,6 +101,11 @@ function renderDAG() {
           if (selectedRelationships && selectedRelationships[d.data.id]) {
             relation = relationshipLabel(selectedRelationships[d.data.id], language)
             content += `<span style='margin-left: 2.5px;'><b> ${relation} </b></span><br>`
+
+            const address = addressLabel(selectedRelationships[d.data.id], dataByID, language)
+            if (address) {
+              content += `<span style='margin-left: 2.5px;'> call them: <b>${address}</b> </span><br>`
+            }
           }
 
           return content.replace(new RegExp("null", "g"), "")

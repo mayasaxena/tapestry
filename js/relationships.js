@@ -12,6 +12,10 @@ const fallbacks = {
   [Languages.hindi]: hindi_fallback
 }
 
+const addresses = {
+  [Languages.hindi]: hindi_address
+}
+
 const siblingRelations = {
   son: 'brother',
   daughter: 'sister',
@@ -34,7 +38,8 @@ function getRelationships(dataByID, adjList, startID, language) {
     path_last: "your",
     key: "your",
     gen_gap: 0,
-    metadata: startMetadata
+    metadata: startMetadata,
+    titled_id: startID
   }
 
   marked[startID] = true
@@ -101,7 +106,9 @@ function getNextNode(fromNode, toID, dataByID, actions, relationsGraph) {
     fallback: key == null ? (anchor.fallback ?? []).concat(relation) : null,
     gen_gap: fromNode.gen_gap + step.gen_gap,
     metadata: metadata,
-    previous: fromNode
+    previous: fromNode,
+    // whoever the label's title belongs to
+    titled_id: key == null ? anchor.titled_id : toID
   }
 
   return nextNode
@@ -117,10 +124,63 @@ function relationshipLabel(relationship, language) {
 
   const steps = (relationship.fallback ?? []).map(relation => phrases[relation] ?? { particle: '', word: relation })
   return steps.reduce((label, phrase, index) => {
-    // "ka" becomes "ke" when another step follows: "phupa ke bhai ka beta"
+    // "ka" becomes "ke" when another step follows: "phupha ke bhai ka beta"
     const particle = phrase.particle == 'ka' && index < steps.length - 1 ? 'ke' : phrase.particle
     return label ? `${label} ${particle} ${phrase.word}` : phrase.word
   }, words[0])
+}
+
+// What to call someone: younger people by name, and elders by their title, a same-sex sibling's title
+// (bhabhi's sister is bhabhi too) or a title for their generation, with an honorific for much older people
+function addressLabel(relationship, dataByID, language) {
+  const address = addresses[language]
+  if (!address || !relationship.previous) {
+    return null
+  }
+
+  var path = [relationship]
+  while (path[0].previous) {
+    path.unshift(path[0].previous)
+  }
+  const you = dataByID[path[0].id]
+  const person = dataByID[relationship.id]
+  const firstName = (person.name ?? '').split(' ')[0]
+  const generation = relationship.gen_gap
+
+  if (generation > 0 || (generation == 0 && !isOlder(person, you))) {
+    return firstName
+  }
+
+  // The parent you're related through, or your older parent for in-laws
+  const parent = path[1].gen_gap == -1
+    ? dataByID[path[1].id]
+    : you.parents.map(id => dataByID[id]).filter(p => p?.birthDate).sort((a, b) => a.birthDate < b.birthDate ? -1 : 1)[0]
+  const olderThanParent = parent ? isOlder(person, parent) : true
+
+  const siblingOfTitled = relationship.fallback?.length == 1
+    && Object.values(siblingRelations).includes(relationship.fallback[0])
+    && dataByID[relationship.titled_id]?.gender == person.gender
+  var title
+  if (!relationship.fallback || siblingOfTitled) {
+    title = relationship.key in address.instead ? address.instead[relationship.key] : definitions[language][relationship.key]
+  } else {
+    var generic = address.generic[Math.max(generation, -3)]
+    if (generic.older) {
+      generic = olderThanParent ? generic.older : generic.younger
+    }
+    title = generic[person.gender]
+  }
+  if (!title) {
+    return firstName
+  }
+
+  const yearsOlder = (new Date(you.birthDate) - new Date(person.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)
+  const honorific = generation == 0 ? yearsOlder > 10 : olderThanParent
+  return honorific ? `${title} ${address.honorific}` : title
+}
+
+function isOlder(person, than) {
+  return Boolean(person?.birthDate && than?.birthDate && person.birthDate < than.birthDate)
 }
 
 function getStep(from, toID, to) {

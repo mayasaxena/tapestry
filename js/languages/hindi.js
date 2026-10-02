@@ -858,7 +858,7 @@ const hindi_def = {
   "paternal_uncle_younger_wife" : "chachi", 
   "paternal_aunt" : "bua", 
   "paternal_aunt_wife" : "bua", 
-  "paternal_aunt_husband" : "phupa", 
+  "paternal_aunt_husband" : "phupha", 
   "sister_older" : "didi", 
   "sister_older_wife" : "didi", 
   "sister_older_husband" : "jija", 
@@ -948,4 +948,27 @@ const hindi_fallback = {
   "brother": { particle: "ka", word: "bhai" },
   "sister": { particle: "ki", word: "behen" },
   "sibling": { particle: "ke", word: "bhai/behen" },
+}
+
+// What to call people to their face (see addressLabel)
+const hindi_address = {
+  honorific: "ji",
+  // Titles people aren't called by to their face: what to say instead, or null for their name
+  instead: {
+    "husband": null,
+    "wife": null,
+    "wife_brother_younger": null,
+    "stepmother": "ma",
+    "stepfather": "papa"
+  },
+  // For elders without a title, by how many generations above you they are
+  generic: {
+    "0": { "Male": "bhaiyya", "Female": "didi" },
+    "-1": {
+      "older": { "Male": "tau", "Female": "tai" },
+      "younger": { "Male": "chacha", "Female": "chachi" }
+    },
+    "-2": { "Male": "dada", "Female": "dadi" },
+    "-3": { "Male": "pardada", "Female": "pardadi" }
+  }
 }
