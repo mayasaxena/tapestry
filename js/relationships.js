@@ -175,7 +175,7 @@ function addressLabel(relationship, dataByID, language) {
   }
 
   const yearsOlder = (new Date(you.birthDate) - new Date(person.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)
-  const honorific = generation == 0 ? yearsOlder > 10 : olderThanParent
+  const honorific = generation == 0 ? yearsOlder > 20 : olderThanParent
   return honorific && !title.endsWith(` ${address.honorific}`) ? `${title} ${address.honorific}` : title
 }
 
