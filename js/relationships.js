@@ -1,7 +1,8 @@
+// Every language walks the Hindi graph, which makes the most distinctions
 const languageGraphs = {
   [Languages.hindi]: hindi_relations_graph,
   [Languages.marathi]: hindi_relations_graph,
-  [Languages.english]: english_relations_graph
+  [Languages.english]: hindi_relations_graph
 }
 
 const definitions = {
@@ -12,12 +13,14 @@ const definitions = {
 
 const fallbacks = {
   [Languages.hindi]: hindiDescribe,
-  [Languages.marathi]: marathiDescribe
+  [Languages.marathi]: marathiDescribe,
+  [Languages.english]: englishDescribe
 }
 
 const addresses = {
   [Languages.hindi]: hindi_address,
-  [Languages.marathi]: marathi_address
+  [Languages.marathi]: marathi_address,
+  [Languages.english]: english_address
 }
 
 const siblingRelations = {
@@ -145,7 +148,7 @@ function addressLabel(relationship, dataByID, language) {
   const firstName = (person.name ?? '').split(' ')[0]
   const generation = relationship.gen_gap
 
-  if (generation > 0 || (generation == 0 && !isOlder(person, you))) {
+  if (generation > 0 || (generation == 0 && (address.peersByName || !isOlder(person, you)))) {
     return firstName
   }
 
@@ -163,10 +166,10 @@ function addressLabel(relationship, dataByID, language) {
     title = relationship.key in address.instead ? address.instead[relationship.key] : definitions[language][relationship.key]
   } else {
     var generic = address.generic[Math.max(generation, -3)]
-    if (generic.older) {
+    if (generic?.older) {
       generic = olderThanParent ? generic.older : generic.younger
     }
-    title = generic[person.gender]
+    title = generic?.[person.gender]
   }
   if (!title) {
     return firstName
@@ -174,7 +177,10 @@ function addressLabel(relationship, dataByID, language) {
 
   const yearsOlder = (new Date(you.birthDate) - new Date(person.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)
   const honorific = generation == 0 ? yearsOlder > 20 : olderThanParent
-  return honorific && address.honorific && !title.endsWith(` ${address.honorific}`) ? `${title} ${address.honorific}` : title
+  if (honorific && address.honorific && !title.endsWith(` ${address.honorific}`)) {
+    title = `${title} ${address.honorific}`
+  }
+  return address.named ? address.named(title, firstName) : title
 }
 
 function isOlder(person, than) {
