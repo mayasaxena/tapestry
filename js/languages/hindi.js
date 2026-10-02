@@ -41,14 +41,14 @@ const hindi_relations_graph = {
     "father": "maternal_grandfather",
     "mother": "maternal_grandmother",
     "husband": "stepfather",
-    "wife": "stepmother",
+    "wife": "mother",
     "son": brother,
     "daughter": sister
   }, 
   "father" : {
     "father": "paternal_grandfather",
     "mother": "paternal_grandmother",
-    "husband": "stepfather",
+    "husband": "father",
     "wife": "stepmother",
     "son": brother,
     "daughter": sister
