@@ -1,19 +1,23 @@
 const languageGraphs = {
   [Languages.hindi]: hindi_relations_graph,
+  [Languages.marathi]: hindi_relations_graph,
   [Languages.english]: english_relations_graph
 }
 
 const definitions = {
   [Languages.hindi]: hindi_def,
+  [Languages.marathi]: marathi_def,
   [Languages.english]: english_def
 }
 
 const fallbacks = {
-  [Languages.hindi]: hindi_fallback
+  [Languages.hindi]: hindiDescribe,
+  [Languages.marathi]: marathiDescribe
 }
 
 const addresses = {
-  [Languages.hindi]: hindi_address
+  [Languages.hindi]: hindi_address,
+  [Languages.marathi]: marathi_address
 }
 
 const siblingRelations = {
@@ -117,17 +121,11 @@ function getNextNode(fromNode, toID, dataByID, actions, relationsGraph) {
 // e.g. "bahu ka bhai" when the language has no word for the relationship
 function relationshipLabel(relationship, language) {
   const words = relationship.key == "your" && relationship.fallback ? [] : [definitions[language][relationship.key]]
-  const phrases = fallbacks[language]
-  if (!phrases) {
+  const describe = fallbacks[language]
+  if (!describe) {
     return words.concat(relationship.fallback ?? []).join("'s ")
   }
-
-  const steps = (relationship.fallback ?? []).map(relation => phrases[relation] ?? { particle: '', word: relation })
-  return steps.reduce((label, phrase, index) => {
-    // "ka" becomes "ke" when another step follows: "phupha ke bhai ka beta"
-    const particle = phrase.particle == 'ka' && index < steps.length - 1 ? 'ke' : phrase.particle
-    return label ? `${label} ${particle} ${phrase.word}` : phrase.word
-  }, words[0])
+  return describe(words[0], relationship.fallback ?? [])
 }
 
 // What to call someone: younger people by name, and elders by their title, a same-sex sibling's title
@@ -176,7 +174,7 @@ function addressLabel(relationship, dataByID, language) {
 
   const yearsOlder = (new Date(you.birthDate) - new Date(person.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)
   const honorific = generation == 0 ? yearsOlder > 20 : olderThanParent
-  return honorific && !title.endsWith(` ${address.honorific}`) ? `${title} ${address.honorific}` : title
+  return honorific && address.honorific && !title.endsWith(` ${address.honorific}`) ? `${title} ${address.honorific}` : title
 }
 
 function isOlder(person, than) {

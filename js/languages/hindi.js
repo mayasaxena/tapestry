@@ -950,6 +950,16 @@ const hindi_fallback = {
   "sibling": { particle: "ke", word: "bhai/behen" },
 }
 
+// Describe a path from the last person with a title, e.g. "phupha ke bhai ka beta"
+function hindiDescribe(title, relations) {
+  return relations.reduce((label, relation, index) => {
+    const phrase = hindi_fallback[relation] ?? { particle: '', word: relation }
+    // "ka" becomes "ke" when another step follows
+    const particle = phrase.particle == 'ka' && index < relations.length - 1 ? 'ke' : phrase.particle
+    return label ? `${label} ${particle} ${phrase.word}` : phrase.word
+  }, title)
+}
+
 // What to call people to their face (see addressLabel)
 const hindi_address = {
   honorific: "ji",
