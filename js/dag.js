@@ -6,11 +6,18 @@ function renderDAG() {
       let language = params.get('language')
 
       // fetch data and render
-      const resp = await fetch(`https://api.airtable.com/v0/${baseID}/People?sort%5B0%5D%5Bfield%5D=Ordering&sort%5B0%5D%5Bdirection%5D=asc`, {
-        headers: { Authorization: `Bearer ${apiKey}` }
-      });
+      // Airtable returns at most 100 records per request, so keep following `offset` until every page is loaded
+      const records = { records: [] }
+      let offset = null
+      do {
+        const resp = await fetch(`https://api.airtable.com/v0/${baseID}/People?sort%5B0%5D%5Bfield%5D=Ordering&sort%5B0%5D%5Bdirection%5D=asc${offset ? `&offset=${encodeURIComponent(offset)}` : ''}`, {
+          headers: { Authorization: `Bearer ${apiKey}` }
+        });
 
-      const records = await resp.json();
+        const page = await resp.json();
+        records.records = records.records.concat(page.records)
+        offset = page.offset
+      } while (offset)
 
       const data = records.records.map(record => 
         ({
@@ -66,7 +73,13 @@ function renderDAG() {
         .sugiyama()
         .decross(d3.decrossOpt())
         .nodeSize((node) => [(node ? 3.6 : 0.25) * nodeRadius, 3 * nodeRadius]); // set node size instead of constraining to fit
-      const { width, height } = layout(dag);
+      let width, height
+      try {
+        ({ width, height } = layout(dag));
+      } catch {
+        // decrossOpt refuses big trees, so fall back to the faster heuristic
+        ({ width, height } = layout.decross(d3.decrossTwoLayer())(dag));
+      }
 
       // --------------------------------
       // This code only handles rendering
