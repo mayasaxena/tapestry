@@ -8,6 +8,16 @@ const definitions = {
   [Languages.english]: english_def
 }
 
+const fallbacks = {
+  [Languages.hindi]: hindi_fallback
+}
+
+const siblingRelations = {
+  son: 'brother',
+  daughter: 'sister',
+  child: 'sibling'
+}
+
 function getRelationships(dataByID, adjList, startID, language) {
   var nodes = {}
   var marked = {}
@@ -74,23 +84,43 @@ function getNextNode(fromNode, toID, dataByID, actions, relationsGraph) {
     key = null
   }
 
+  // Without a word, describe the step from the last person who has one, calling a parent's child a sibling
+  // (bahu's brother rather than samdhi's son)
+  var anchor = fromNode
+  var relation = step.relation
+  if (key == null && step.gen_gap == 1 && fromNode.previous && fromNode.gen_gap - fromNode.previous.gen_gap == -1) {
+    anchor = fromNode.previous
+    relation = siblingRelations[step.relation]
+  }
+
   const nextNode = {
     id: toID,
     path: fromNode.path + '-' + step.relation,
     path_last: step.relation,
-    key: key ?? fromNode.key,
-    fallback: key == null ? (fromNode.fallback ?? []).concat(step.relation) : null,
+    key: key ?? anchor.key,
+    fallback: key == null ? (anchor.fallback ?? []).concat(relation) : null,
     gen_gap: fromNode.gen_gap + step.gen_gap,
-    metadata: metadata
+    metadata: metadata,
+    previous: fromNode
   }
 
   return nextNode
 }
 
-// e.g. "bua's wife" when the language has no word for the relationship
+// e.g. "bahu ka bhai" when the language has no word for the relationship
 function relationshipLabel(relationship, language) {
   const words = relationship.key == "your" && relationship.fallback ? [] : [definitions[language][relationship.key]]
-  return words.concat(relationship.fallback ?? []).join("'s ")
+  const phrases = fallbacks[language]
+  if (!phrases) {
+    return words.concat(relationship.fallback ?? []).join("'s ")
+  }
+
+  const steps = (relationship.fallback ?? []).map(relation => phrases[relation] ?? { particle: '', word: relation })
+  return steps.reduce((label, phrase, index) => {
+    // "ka" becomes "ke" when another step follows: "phupa ke bhai ka beta"
+    const particle = phrase.particle == 'ka' && index < steps.length - 1 ? 'ke' : phrase.particle
+    return label ? `${label} ${particle} ${phrase.word}` : phrase.word
+  }, words[0])
 }
 
 function getStep(from, toID, to) {

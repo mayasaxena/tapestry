@@ -933,3 +933,19 @@ const hindi_def = {
   "maternal_greatgrandfather": "parnana",
   "maternal_greatgrandmother": "parnani",
 }
+
+// How to say a step there's no word for, e.g. bahu + brother = "bahu ka bhai"
+const hindi_fallback = {
+  "father": { particle: "ke", word: "papa" },
+  "mother": { particle: "ki", word: "ma" },
+  "parent": { particle: "ke", word: "mata/pita" },
+  "husband": { particle: "ke", word: "pati" },
+  "wife": { particle: "ki", word: "patni" },
+  "spouse": { particle: "ke", word: "jeevansaathi" },
+  "son": { particle: "ka", word: "beta" },
+  "daughter": { particle: "ki", word: "beti" },
+  "child": { particle: "ki", word: "santaan" },
+  "brother": { particle: "ka", word: "bhai" },
+  "sister": { particle: "ki", word: "behen" },
+  "sibling": { particle: "ke", word: "bhai/behen" },
+}
