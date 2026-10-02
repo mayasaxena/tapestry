@@ -12,8 +12,9 @@ function getRelationships(dataByID, adjList, startID, language) {
   var nodes = {}
   var marked = {}
 
-  var stack = []
-  stack.push(startID)
+  // Breadth-first, so everyone is labelled through their closest connection to the selected person
+  var queue = []
+  queue.push(startID)
   const startData = dataByID[startID]
   const startMetadata = getMetadata(startData, language)
 
@@ -28,13 +29,13 @@ function getRelationships(dataByID, adjList, startID, language) {
 
   marked[startID] = true
 
-  while (stack.length > 0) {
-    var sourceID = stack.pop()
+  while (queue.length > 0) {
+    var sourceID = queue.shift()
     const source = nodes[sourceID]
 
     adjList[sourceID].forEach(destID => {
       if (!marked[destID]) {
-        stack.push(destID)
+        queue.push(destID)
         nodes[destID] = getNextNode(source, destID, dataByID, Object.keys(startMetadata), languageGraphs[language])
         marked[destID] = true
       }
@@ -61,13 +62,16 @@ function getNextNode(fromNode, toID, dataByID, actions, relationsGraph) {
     }
   })
 
-  const fromNexts = relationsGraph[fromNode.key]
-  var key = fromNexts[step.relation]
+  // Once a step has no word, everyone past it is described from the last person who had one
+  var key = fromNode.fallback ? null : relationsGraph[fromNode.key]?.[step.relation]
 
   var index = 0
   while (isObject(key) && index < metadataKeys.length) {
     key = key[metadataKeys[index]]
     index += 1
+  }
+  if (isObject(key)) {
+    key = null
   }
 
   const nextNode = {
@@ -75,12 +79,18 @@ function getNextNode(fromNode, toID, dataByID, actions, relationsGraph) {
     path: fromNode.path + '-' + step.relation,
     path_last: step.relation,
     key: key ?? fromNode.key,
-    fallback: key === null ? step.relation : null,
+    fallback: key == null ? (fromNode.fallback ?? []).concat(step.relation) : null,
     gen_gap: fromNode.gen_gap + step.gen_gap,
     metadata: metadata
   }
 
   return nextNode
+}
+
+// e.g. "bua's wife" when the language has no word for the relationship
+function relationshipLabel(relationship, language) {
+  const words = relationship.key == "your" && relationship.fallback ? [] : [definitions[language][relationship.key]]
+  return words.concat(relationship.fallback ?? []).join("'s ")
 }
 
 function getStep(from, toID, to) {

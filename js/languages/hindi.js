@@ -40,7 +40,7 @@ const hindi_relations_graph = {
   "mother" : {
     "father": "maternal_grandfather",
     "mother": "maternal_grandmother",
-    "husband": "father",
+    "husband": "stepfather",
     "wife": null,
     "son": brother,
     "daughter": sister
@@ -49,7 +49,23 @@ const hindi_relations_graph = {
     "father": "paternal_grandfather",
     "mother": "paternal_grandmother",
     "husband": null,
-    "wife": "mother",
+    "wife": "stepmother",
+    "son": brother,
+    "daughter": sister
+  }, 
+  "stepmother" : {
+    "father": null,
+    "mother": null,
+    "husband": null,
+    "wife": null,
+    "son": brother,
+    "daughter": sister
+  }, 
+  "stepfather" : {
+    "father": null,
+    "mother": null,
+    "husband": null,
+    "wife": null,
     "son": brother,
     "daughter": sister
   }, 
@@ -144,7 +160,7 @@ const hindi_relations_graph = {
   "paternal_uncle_older_wife" : {
     "father": null,
     "mother": null,
-    "husband": "paternal_uncle",
+    "husband": "paternal_uncle_older",
     "wife": null,
     "son": brother,
     "daughter": sister
@@ -211,12 +227,20 @@ const hindi_relations_graph = {
     "husband": null,
     "wife": "sister_younger",
     "son": "sister_son",
-    "daughter": "sister_son"
+    "daughter": "sister_daughter"
   }, 
   "sister_son" : {
     "father": null,
     "mother": null,
     "husband": null,
+    "wife": "sister_son_wife",
+    "son": "son_son",
+    "daughter": "son_daughter"
+  }, 
+  "sister_son_wife" : {
+    "father": null,
+    "mother": null,
+    "husband": "sister_son",
     "wife": null,
     "son": "son_son",
     "daughter": "son_daughter"
@@ -224,8 +248,16 @@ const hindi_relations_graph = {
   "sister_daughter" : {
     "father": null,
     "mother": null,
-    "husband": null,
+    "husband": "sister_daughter_husband",
     "wife": null,
+    "son": "daughter_son",
+    "daughter": "daughter_daughter"
+  }, 
+  "sister_daughter_husband" : {
+    "father": null,
+    "mother": null,
+    "husband": null,
+    "wife": "sister_daughter",
     "son": "daughter_son",
     "daughter": "daughter_daughter"
   },
@@ -264,8 +296,16 @@ const hindi_relations_graph = {
   "brother_daughter" : {
     "father": null,
     "mother": null,
-    "husband": null,
+    "husband": "brother_daughter_husband",
     "wife": null,
+    "son": "daughter_son",
+    "daughter": "daughter_daughter"
+  }, 
+  "brother_daughter_husband" : {
+    "father": null,
+    "mother": null,
+    "husband": null,
+    "wife": "brother_daughter",
     "son": "daughter_son",
     "daughter": "daughter_daughter"
   }, 
@@ -273,6 +313,14 @@ const hindi_relations_graph = {
     "father": null,
     "mother": null,
     "husband": null,
+    "wife": "brother_son_wife",
+    "son": "son_son",
+    "daughter": "son_daughter"
+  }, 
+  "brother_son_wife" : {
+    "father": null,
+    "mother": null,
+    "husband": "brother_son",
     "wife": null,
     "son": "son_son",
     "daughter": "son_daughter"
@@ -313,7 +361,7 @@ const hindi_relations_graph = {
     "father": null,
     "mother": null,
     "husband": null,
-    "wife": "husband_sister_husband",
+    "wife": "husband_sister",
     "son": "sister_son",
     "daughter": "sister_daughter"
   }, 
@@ -339,7 +387,7 @@ const hindi_relations_graph = {
     "husband": null,
     "wife": null,
     "son": "son",
-    "daughter": "son"
+    "daughter": "daughter"
   }, 
   "wife_brother_older" : {
     "father": "wife_father",
@@ -400,34 +448,66 @@ const hindi_relations_graph = {
   "daughter_daughter" : {
     "father": null,
     "mother": null,
-    "husband": null,
+    "husband": "daughter_daughter_husband",
     "wife": null,
-    "son": null,
-    "daughter": null
+    "son": "daughter_line_great_grandson",
+    "daughter": "daughter_line_great_granddaughter"
+  }, 
+  "daughter_daughter_husband" : {
+    "father": null,
+    "mother": null,
+    "husband": null,
+    "wife": "daughter_daughter",
+    "son": "daughter_line_great_grandson",
+    "daughter": "daughter_line_great_granddaughter"
   }, 
   "daughter_son" : {
     "father": null,
     "mother": null,
     "husband": null,
+    "wife": "daughter_son_wife",
+    "son": "daughter_line_great_grandson",
+    "daughter": "daughter_line_great_granddaughter"
+  }, 
+  "daughter_son_wife" : {
+    "father": null,
+    "mother": null,
+    "husband": "daughter_son",
     "wife": null,
-    "son": null,
-    "daughter": null
+    "son": "daughter_line_great_grandson",
+    "daughter": "daughter_line_great_granddaughter"
   }, 
   "son_daughter" : {
     "father": null,
     "mother": null,
-    "husband": null,
+    "husband": "son_daughter_husband",
     "wife": null,
-    "son": null,
-    "daughter": null
+    "son": "son_line_great_grandson",
+    "daughter": "son_line_great_granddaughter"
+  }, 
+  "son_daughter_husband" : {
+    "father": null,
+    "mother": null,
+    "husband": null,
+    "wife": "son_daughter",
+    "son": "son_line_great_grandson",
+    "daughter": "son_line_great_granddaughter"
   }, 
   "son_son" : {
     "father": null,
     "mother": null,
     "husband": null,
+    "wife": "son_son_wife",
+    "son": "son_line_great_grandson",
+    "daughter": "son_line_great_granddaughter"
+  }, 
+  "son_son_wife" : {
+    "father": null,
+    "mother": null,
+    "husband": "son_son",
     "wife": null,
-    "son": null,
-    "daughter": null
+    "son": "son_line_great_grandson",
+    "daughter": "son_line_great_granddaughter"
   }, 
   "child_wife" : {
     "father": "child_spouse_father",
@@ -525,12 +605,46 @@ const hindi_relations_graph = {
     "son": "maternal_grandfather",
     "daughter": "maternal_grandmother"
   },
+  "son_line_great_grandson" : {
+    "father": null,
+    "mother": null,
+    "husband": null,
+    "wife": null,
+    "son": null,
+    "daughter": null
+  },
+  "son_line_great_granddaughter" : {
+    "father": null,
+    "mother": null,
+    "husband": null,
+    "wife": null,
+    "son": null,
+    "daughter": null
+  },
+  "daughter_line_great_grandson" : {
+    "father": null,
+    "mother": null,
+    "husband": null,
+    "wife": null,
+    "son": null,
+    "daughter": null
+  },
+  "daughter_line_great_granddaughter" : {
+    "father": null,
+    "mother": null,
+    "husband": null,
+    "wife": null,
+    "son": null,
+    "daughter": null
+  },
 }
 
 const hindi_def = {
   "your" : "you", 
   "mother" : "ma", 
   "father" : "papa", 
+  "stepmother" : "sauteli ma", 
+  "stepfather" : "sautele papa", 
   "paternal_grandfather" : "dada", 
   "paternal_grandmother" : "dadi", 
   "maternal_grandfather" : "nana", 
@@ -553,19 +667,23 @@ const hindi_def = {
   "sister_younger_husband" : "behnoi", 
   "sister_son" : "bhanja", 
   "sister_daughter" : "bhanji",
+  "sister_son_wife" : "bhanj bahu", 
+  "sister_daughter_husband" : "bhanji damad", 
   "brother_older" : "bhaiyya", 
   "brother_older_wife" : "bhabhi", 
   "brother_younger" : "bhai", 
   "brother_younger_wife" : "bhayo", 
   "brother_daughter" : "bhatiji", 
   "brother_son" : "bhatija", 
+  "brother_son_wife" : "bhatij bahu", 
+  "brother_daughter_husband" : "bhatiji damad", 
   "husband" : "pati", 
   "husband_brother_older" : "jeth", 
   "husband_brother_older_wife" : "jethani", 
   "husband_sister" : "nanand", 
   "husband_sister_husband" : "nandoi", 
-  "husband_brother_younger" : "deconst", 
-  "husband_brother_younger_wife" : "deconstani", 
+  "husband_brother_younger" : "devar", 
+  "husband_brother_younger_wife" : "devrani", 
   "wife" : "patni", 
   "wife_brother_older" : "bhai saheb", 
   "wife_brother_younger" : "saala", 
@@ -578,6 +696,14 @@ const hindi_def = {
   "daughter_son" : "nati, navasa", 
   "son_daughter" : "poti", 
   "son_son" : "pota", 
+  "son_son_wife" : "pota bahu", 
+  "son_daughter_husband" : "poti damad", 
+  "daughter_son_wife" : "nati bahu", 
+  "daughter_daughter_husband" : "natin damad", 
+  "son_line_great_grandson" : "parpota", 
+  "son_line_great_granddaughter" : "parpoti", 
+  "daughter_line_great_grandson" : "parnati", 
+  "daughter_line_great_granddaughter" : "parnatin", 
   "child_wife" : "bahu", 
   "child_husband" : "damad", 
   "wife_mother" : "saas", 

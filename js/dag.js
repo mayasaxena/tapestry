@@ -98,10 +98,8 @@ function renderDAG() {
 
           const selectedRelationships = relationships[selectedID]
          
-          if (selectedRelationships) {
-            const relationship = selectedRelationships[d.data.id]
-            relation = definitions[language][relationship.key] + (relationship.fallback ?? "")
-            console.log(relationship);
+          if (selectedRelationships && selectedRelationships[d.data.id]) {
+            relation = relationshipLabel(selectedRelationships[d.data.id], language)
             content += `<span style='margin-left: 2.5px;'><b> ${relation} </b></span><br>`
           }
 
