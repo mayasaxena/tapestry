@@ -1,4 +1,4 @@
-// Marathi makes the same distinctions as Hindi or fewer (both sets of grandparents are ajoba and aaji),
+// Marathi makes the same distinctions as Hindi or fewer (both sets of grandparents are ajoba and ajji),
 // so it walks the Hindi relations graph and only needs its own words
 const marathi_def = {
   "your" : "you",
@@ -7,27 +7,27 @@ const marathi_def = {
   "stepmother" : "saavatra aai",
   "stepfather" : "saavatra baba",
   "paternal_grandfather" : "ajoba",
-  "paternal_grandmother" : "aaji",
+  "paternal_grandmother" : "ajji",
   "maternal_grandfather" : "ajoba",
-  "maternal_grandmother" : "aaji",
+  "maternal_grandmother" : "ajji",
   "maternal_uncle_older" : "mama",
   "maternal_uncle_older_husband" : "mama",
   "maternal_uncle_older_wife" : "mami",
   "maternal_uncle_younger" : "mama",
   "maternal_uncle_younger_husband" : "mama",
   "maternal_uncle_younger_wife" : "mami",
-  "maternal_aunt" : "mavshi",
-  "maternal_aunt_wife" : "mavshi",
-  "maternal_aunt_husband" : "mavsa",
+  "maternal_aunt" : "maushi",
+  "maternal_aunt_wife" : "maushi",
+  "maternal_aunt_husband" : "mama",
   "paternal_uncle_older" : "kaka",
   "paternal_uncle_older_husband" : "kaka",
   "paternal_uncle_older_wife" : "kaku",
   "paternal_uncle_younger" : "kaka",
   "paternal_uncle_younger_husband" : "kaka",
   "paternal_uncle_younger_wife" : "kaku",
-  "paternal_aunt" : "aatya",
-  "paternal_aunt_wife" : "aatya",
-  "paternal_aunt_husband" : "aatobaa",
+  "paternal_aunt" : "atya",
+  "paternal_aunt_wife" : "atya",
+  "paternal_aunt_husband" : "kaka",
   "sister_older" : "tai",
   "sister_older_wife" : "tai",
   "sister_older_husband" : "bhaoji",
@@ -81,15 +81,15 @@ const marathi_def = {
   "son_daughter_wife" : "nat",
   "son_son" : "natu",
   "son_son_husband" : "natu",
-  "son_son_wife" : "natsun",
+  "son_son_wife" : "natsoon",
   "son_daughter_husband" : "natjavai",
-  "daughter_son_wife" : "natsun",
+  "daughter_son_wife" : "natsoon",
   "daughter_daughter_husband" : "natjavai",
   "son_line_great_grandson" : "panatu",
   "son_line_great_granddaughter" : "panti",
   "daughter_line_great_grandson" : "panatu",
   "daughter_line_great_granddaughter" : "panti",
-  "child_wife" : "sun",
+  "child_wife" : "soon",
   "child_husband" : "javai",
   "wife_mother" : "saasu",
   "wife_father" : "sasre",
@@ -103,8 +103,8 @@ const marathi_def = {
   "maternal_greatgrandmother": "panji",
 }
 
-// How to say a step there's no word for: the possessive joins onto the person before it, e.g. sun + brother
-// = "sunecha bhau", agreeing with the word after it (cha, chi, che)
+// How to say a step there's no word for: the possessive joins onto the person before it, e.g. soon + brother
+// = "soonecha bhau", agreeing with the word after it (cha, chi, che)
 const marathi_fallback = {
   "father": { suffix: "che", word: "baba" },
   "mother": { suffix: "chi", word: "aai" },
@@ -120,7 +120,7 @@ const marathi_fallback = {
   "sibling": { suffix: "che", word: "bhavanda" },
 }
 
-// Words whose ending changes before a possessive, e.g. sun -> "sunecha"
+// Words whose ending changes before a possessive, e.g. soon -> "soonecha"
 const marathi_oblique = {
   "baba": "baban",
   "navra": "navrya",
@@ -129,7 +129,7 @@ const marathi_oblique = {
   "mul": "mula",
   "bhau": "bhava",
   "bahin": "bahini",
-  "sun": "sune",
+  "soon": "soone",
   "javai": "javaya",
   "nat": "nati",
   "natu": "natva",
@@ -176,7 +176,7 @@ const marathi_address = {
   generic: {
     "0": { "Male": "dada", "Female": "tai" },
     "-1": { "Male": "kaka", "Female": "kaku" },
-    "-2": { "Male": "ajoba", "Female": "aaji" },
+    "-2": { "Male": "ajoba", "Female": "ajji" },
     "-3": { "Male": "panjoba", "Female": "panji" }
   }
 }

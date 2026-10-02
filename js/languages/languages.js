@@ -10,3 +10,8 @@ function getMetadata(source, language) {
       return { [Metadata.reference_age]: [source.birthDate] }
   }
 }
+
+// Use Marathi words for people who speak it
+function termsLanguage(person, language) {
+  return (person.languages ?? []).some(spoken => spoken.toLowerCase() == Languages.marathi) ? Languages.marathi : language
+}

@@ -99,10 +99,11 @@ function renderDAG() {
           const selectedRelationships = relationships[selectedID]
          
           if (selectedRelationships && selectedRelationships[d.data.id]) {
-            relation = relationshipLabel(selectedRelationships[d.data.id], language)
+            const terms = termsLanguage(data, language)
+            relation = relationshipLabel(selectedRelationships[d.data.id], terms)
             content += `<span style='margin-left: 2.5px;'><b> ${relation} </b></span><br>`
 
-            const address = addressLabel(selectedRelationships[d.data.id], dataByID, language)
+            const address = addressLabel(selectedRelationships[d.data.id], dataByID, terms)
             if (address) {
               content += `<span style='margin-left: 2.5px;'> call them: <b>${address}</b> </span><br>`
             }
