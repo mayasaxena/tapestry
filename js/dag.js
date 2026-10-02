@@ -3,19 +3,24 @@ function renderDAG() {
       let params = new URLSearchParams(window.location.search.slice(1));
       let baseID = params.get('base-id')
       let apiKey = params.get('api-key')
-      let language = Object.values(Languages).includes(params.get('language')) ? params.get('language') : Languages.hindi
+      // No language means each pair of people's shared languages
+      let language = Object.values(Languages).includes(params.get('language')) ? params.get('language') : null
 
       // The language picker; the choice goes in the URL so it survives a reload
       const picker = d3.select("#language")
       picker.selectAll("option")
-        .data(Object.values(Languages))
+        .data([''].concat(Object.values(Languages)))
         .enter()
         .append("option")
         .attr("value", value => value)
         .text(value => value.charAt(0).toUpperCase() + value.slice(1))
-      picker.property("value", language).on("change", event => {
-        language = event.target.value
-        params.set('language', language)
+      picker.property("value", language ?? '').on("change", event => {
+        language = event.target.value || null
+        if (language) {
+          params.set('language', language)
+        } else {
+          params.delete('language')
+        }
         history.replaceState(null, '', `?${params}`)
       })
 
@@ -114,10 +119,10 @@ function renderDAG() {
          
           if (selectedRelationships && selectedRelationships[d.data.id]) {
             const relationship = selectedRelationships[d.data.id]
-            const shared = sharedLanguages(dataByID[selectedID], data, language)
-            shared.forEach(terms => {
+            const shown = tooltipLanguages(dataByID[selectedID], data, language)
+            shown.forEach(terms => {
               relation = relationshipLabel(relationship, terms)
-              const languageName = shared.length > 1 ? ` (${terms.charAt(0).toUpperCase() + terms.slice(1)})` : ''
+              const languageName = shown.length > 1 ? ` (${terms.charAt(0).toUpperCase() + terms.slice(1)})` : ''
               content += `<span style='margin-left: 2.5px;'><b> ${relation} </b>${languageName}</span><br>`
 
               const address = addressLabel(relationship, dataByID, terms)
@@ -252,7 +257,7 @@ function renderDAG() {
           .on('click', function (_, d) {
             selectedID = d.data.id
             if (!relationships[d.data.id]) {
-              relationships[d.data.id] = getRelationships(dataByID, adjList, d.data.id, language)
+              relationships[d.data.id] = getRelationships(dataByID, adjList, d.data.id)
             }
             singleSelectClassOn(this, "source")
             tip.show(_, d, selectedID);

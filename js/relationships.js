@@ -1,10 +1,3 @@
-// Every language walks the Hindi graph, which makes the most distinctions
-const languageGraphs = {
-  [Languages.hindi]: hindi_relations_graph,
-  [Languages.marathi]: hindi_relations_graph,
-  [Languages.english]: hindi_relations_graph
-}
-
 const definitions = {
   [Languages.hindi]: hindi_def,
   [Languages.marathi]: marathi_def,
@@ -29,7 +22,8 @@ const siblingRelations = {
   child: 'sibling'
 }
 
-function getRelationships(dataByID, adjList, startID, language) {
+// Every language words the same relationships, walking the Hindi graph since it makes the most distinctions
+function getRelationships(dataByID, adjList, startID) {
   var nodes = {}
   var marked = {}
 
@@ -37,7 +31,7 @@ function getRelationships(dataByID, adjList, startID, language) {
   var queue = []
   queue.push(startID)
   const startData = dataByID[startID]
-  const startMetadata = getMetadata(startData, language)
+  const startMetadata = getMetadata(startData)
 
   nodes[startID] = {
     id: startID,
@@ -58,7 +52,7 @@ function getRelationships(dataByID, adjList, startID, language) {
     adjList[sourceID].forEach(destID => {
       if (!marked[destID]) {
         queue.push(destID)
-        nodes[destID] = getNextNode(source, destID, dataByID, Object.keys(startMetadata), languageGraphs[language])
+        nodes[destID] = getNextNode(source, destID, dataByID, Object.keys(startMetadata), hindi_relations_graph)
         marked[destID] = true
       }
     });
