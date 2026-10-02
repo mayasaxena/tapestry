@@ -91,6 +91,24 @@ svg {
   height: 100%;
 }
 
+#controls {
+  position: fixed;
+  top: 1em;
+  right: 1em;
+  padding: 0.5em 1em;
+  background: white;
+}
+
+#controls label {
+  margin-top: 0;
+}
+
+#controls select {
+  width: auto;
+  margin: 0 0 0 0.5em;
+  padding: 0.5em;
+}
+
 .source {
   stroke-width: 30px !important;
   stroke-dasharray: 6, 15;

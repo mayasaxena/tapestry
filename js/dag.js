@@ -3,7 +3,21 @@ function renderDAG() {
       let params = new URLSearchParams(window.location.search.slice(1));
       let baseID = params.get('base-id')
       let apiKey = params.get('api-key')
-      let language = params.get('language')
+      let language = Object.values(Languages).includes(params.get('language')) ? params.get('language') : Languages.hindi
+
+      // The language picker; the choice goes in the URL so it survives a reload
+      const picker = d3.select("#language")
+      picker.selectAll("option")
+        .data(Object.values(Languages))
+        .enter()
+        .append("option")
+        .attr("value", value => value)
+        .text(value => value.charAt(0).toUpperCase() + value.slice(1))
+      picker.property("value", language).on("change", event => {
+        language = event.target.value
+        params.set('language', language)
+        history.replaceState(null, '', `?${params}`)
+      })
 
       // fetch data and render
       // Airtable returns at most 100 records per request, so keep following `offset` until every page is loaded
